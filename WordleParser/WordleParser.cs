@@ -8,45 +8,16 @@ public class WordleParser
     {
         var scores = GetScores(filepath).ToList();
 
-        var years = scores.GroupBy(x => x.Date.Year);
-        var months = scores.GroupBy(x => new { x.Date.Year, x.Date.Month});
-
-        foreach (var month in months)
+        var years = scores.GroupBy(x => x.Date.Year.ToString());
+        foreach (var range in BuildRanges(years))
         {
-            var familyMembers = month
-                .GroupBy(x => x.FamilyMember)
-                .OrderBy(x => x.Average(y => y.DistanceFromAverageScore));
-            
-            foreach (var familyMember in familyMembers)
-            {
-                yield return new WordleRange
-                {
-                    Average = familyMember.Average(x => x.Score),
-                    AverageDistanceFromAverageScore = familyMember.Average(x => x.DistanceFromAverageScore),
-                    FamilyMember = familyMember.Key,
-                    Range = $"{month.Key.Year}-{month.Key.Month}",
-                    Played = familyMember.Count()
-                };
-            }
+            yield return range;
         }
-        
-        foreach (var year in years)
+
+        var months = scores.GroupBy(x => $"{x.Date.Year}-{x.Date.Month}");
+        foreach (var range in BuildRanges(months))
         {
-            var familyMembers = year
-                .GroupBy(x => x.FamilyMember)
-                .OrderBy(x => x.Average(y => y.DistanceFromAverageScore));
-            
-            foreach (var familyMember in familyMembers)
-            {
-                yield return new WordleRange
-                {
-                    Average = familyMember.Average(x => x.Score),
-                    AverageDistanceFromAverageScore = familyMember.Average(x => x.DistanceFromAverageScore),
-                    FamilyMember = familyMember.Key,
-                    Range = year.Key.ToString(),
-                    Played = familyMember.Count()
-                };
-            }
+            yield return range;
         }
     }
 
@@ -91,8 +62,29 @@ public class WordleParser
             yield return wordleScore;
         }
     }
-}
 
+    private static IEnumerable<WordleRange> BuildRanges(IEnumerable<IGrouping<string, WordleScore>> scoreGroups)
+    {
+        foreach (var scoreGroup in scoreGroups)
+        {
+            var familyMembers = scoreGroup
+                .GroupBy(x => x.FamilyMember)
+                .OrderBy(x => x.Average(y => y.DistanceFromAverageScore));
+            
+            foreach (var familyMember in familyMembers)
+            {
+                yield return new WordleRange
+                {
+                    Average = familyMember.Average(x => x.Score),
+                    AverageDistanceFromAverageScore = familyMember.Average(x => x.DistanceFromAverageScore),
+                    FamilyMember = familyMember.Key,
+                    Range = scoreGroup.Key,
+                    Played = familyMember.Count()
+                };
+            }
+        }
+    }
+}
 
 public class WordleRange
 {
