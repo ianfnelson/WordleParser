@@ -14,7 +14,7 @@ public class WordleParser
             yield return range;
         }
 
-        var months = scores.GroupBy(x => $"{x.Date.Year}-{x.Date.Month}");
+        var months = scores.GroupBy(x => $"{x.Date.Year}-{x.Date.Month:00}");
         foreach (var range in BuildRanges(months))
         {
             yield return range;
@@ -84,35 +84,4 @@ public class WordleParser
             }
         }
     }
-}
-
-public class WordleRange
-{
-    public string Range { get; set; }
-    public string FamilyMember { get; set; }
-    public int Played { get; set; }
-    public double Average { get; set; }
-    public double AverageDistanceFromAverageScore { get; set; }
-
-    public override string ToString()
-    {
-        return Range.PadRight(10) +
-               FamilyMember.PadRight(20) +
-               Played.ToString().PadRight(4) +
-               Average.ToString("F3").PadRight(6) +
-               AverageDistanceFromAverageScore.ToString("F3").PadRight(6);
-    }
-}
-
-public class WordleScore
-{
-    private readonly DateOnly _wordleEpoch = new(2021, 6, 19);
-    
-    public DateOnly Date => _wordleEpoch.AddDays(Wordle);
-
-    public required string FamilyMember { get; set; } 
-    public int Wordle { get; set; }
-    public int Score { get; set; }
-    
-    public double DistanceFromAverageScore { get; set; }
 }
