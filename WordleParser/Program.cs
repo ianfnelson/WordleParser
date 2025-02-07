@@ -10,7 +10,15 @@ if (!File.Exists(filePath))
     return;
 }
 
-foreach (var line in WordleParser.WordleParser.Parse(filePath))
+foreach (var range in WordleParser.WordleParser.Parse(filePath))
 {
-    Console.WriteLine(line);
+    Console.WriteLine(range.Name);
+    Console.WriteLine();
+
+    foreach (var entry in range.Entries)
+    {
+        Console.WriteLine(entry);
+    }
+    
+    Console.WriteLine();
 }
