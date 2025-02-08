@@ -12,13 +12,13 @@ if (!File.Exists(filePath))
 
 foreach (var range in WordleParser.WordleParser.Parse(filePath))
 {
-    Console.WriteLine(range.Name);
-    Console.WriteLine();
+    Console.WriteLine("*"+range.Name+"*");
+    Console.WriteLine("```");
 
     foreach (var entry in range.Entries)
     {
         Console.WriteLine(entry);
     }
     
-    Console.WriteLine();
+    Console.WriteLine("```");
 }
