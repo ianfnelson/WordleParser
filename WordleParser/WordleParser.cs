@@ -103,6 +103,7 @@ public class WordleParser
                 Math.Abs(entries[i].Average - entries[i - 1].Average) < 0.0001D && 
                 Math.Abs(entries[i].AverageDistanceFromAverageScore - entries[i - 1].AverageDistanceFromAverageScore) < 0.0001D)
             {
+                entries[i - 1].Rank = entries[i - 1].Rank.Replace(".", "=");
                 entries[i].Rank = $"{entries[i - 1].Rank}";
             }
             else
