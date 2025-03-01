@@ -78,6 +78,7 @@ public class WordleParser
         var entries = scoreGroup
             .GroupBy(x => x.FamilyMember)
             .OrderBy(x => x.Average(y => y.Score))
+            .ThenBy(x => x.Key)
             .Select(familyMember => new WordleRangeEntry
             {
                 Average = familyMember.Average(x => x.Score),
