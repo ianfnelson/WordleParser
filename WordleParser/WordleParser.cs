@@ -31,22 +31,8 @@ public class WordleParser
 
     private static IEnumerable<WordleScore> GetScores(string filepath)
     {
-        var scores = ParseScores(filepath)
-            .DistinctBy(x => new {x.Date, x.FamilyMember})
-            .ToList();
-        
-        var dailyAverages = scores
-            .GroupBy(x => x.Date)
-            .ToDictionary(
-                g => g.Key, 
-                g => g.Average(x => x.Score)
-            );
-
-        foreach (var score in scores)
-        {
-            score.DistanceFromAverageScore = score.Score - dailyAverages[score.Date];
-            yield return score;
-        }
+        return ParseScores(filepath)
+            .DistinctBy(x => new {x.Date, x.FamilyMember});
     }
     
     private static IEnumerable<WordleScore> ParseScores(string filepath)
@@ -78,12 +64,10 @@ public class WordleParser
         var entries = scoreGroup
             .GroupBy(x => x.FamilyMember)
             .OrderBy(x => x.Average(y => y.Score))
-            .ThenBy(x => x.Average(y => y.DistanceFromAverageScore))
             .ThenBy(x => x.Key)
             .Select(familyMember => new WordleRangeEntry
             {
                 Average = familyMember.Average(x => x.Score),
-                AverageDistanceFromAverageScore = familyMember.Average(x => x.DistanceFromAverageScore),
                 FamilyMember = familyMember.Key,
                 Played = familyMember.Count()
             }).ToList();
@@ -102,8 +86,7 @@ public class WordleParser
         for (var i = 0; i < entries.Count; i++)
         {
             if (i > 0 && 
-                Math.Abs(entries[i].Average - entries[i - 1].Average) < 0.0001D && 
-                Math.Abs(entries[i].AverageDistanceFromAverageScore - entries[i - 1].AverageDistanceFromAverageScore) < 0.0001D)
+                Math.Abs(entries[i].Average - entries[i - 1].Average) < 0.0001D)
             {
                 entries[i - 1].Rank = entries[i - 1].Rank.Replace(".", "=");
                 entries[i].Rank = $"{entries[i - 1].Rank}";

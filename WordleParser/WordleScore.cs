@@ -9,6 +9,4 @@ public class WordleScore
     public required string FamilyMember { get; set; } 
     public int Wordle { get; set; }
     public int Score { get; set; }
-    
-    public double DistanceFromAverageScore { get; set; }
 }
