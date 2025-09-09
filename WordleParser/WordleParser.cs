@@ -73,7 +73,7 @@ public class WordleParser
 
     private static WordleRange BuildRange(string name, IGrouping<string, WordleScore> scoreGroup)
     {
-        var range = new WordleRange { Name = name };
+        var range = new WordleRange { Name = "Wordle — " + name };
 
         var entries = scoreGroup
             .GroupBy(x => x.FamilyMember)
